@@ -156,44 +156,6 @@
 
 import { EventBus } from '../main.js';
 
-const planning = [
-  {
-    id: 0,
-    name: "rendez vous médecin",
-    userId: 1,
-    dateEventBegin: "15",
-    dateEventEnd: ""
-  },
-  {
-    id: 1,
-    name: "mise en prod",
-    userId: 1,
-    dateEventBegin: "20",
-    dateEventEnd: ""
-  },
-  {
-    id: 2,
-    name: "réunion fin de projet",
-    userId: 1,
-    dateEventBegin: "15",
-    dateEventEnd: ""
-  },
-  {
-    id: 3,
-    name: "montage vidéo",
-    userId: 2,
-    dateEventBegin: "29",
-    dateEventEnd: ""
-  },
-  {
-    id: 4,
-    name: "pause café",
-    userId: 2,
-    dateEventBegin: "15",
-    dateEventEnd: ""
-  }
-];
-
 export default {
   components: {},
   data() {

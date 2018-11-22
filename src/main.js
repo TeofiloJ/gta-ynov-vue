@@ -7,6 +7,9 @@ import VueRouter from 'vue-router'
 
 
 import planning from './views/Planning.vue'
+import login from './views/Login.vue'
+import dashboard from './views/Dashboard.vue'
+import profile from './views/Profile.vue'
 
 Vue.use(VueRouter)
 Vue.use(BootstrapVue)
@@ -18,9 +21,36 @@ const router = new VueRouter({
   routes: [
     {
       path: '/',
+      name: 'login',
+      component: login,
+      meta: {
+        requireAuth: false
+      }
+    },
+    {
+      path: '/planning',
       name: 'planning',
-      component: planning
-    }
+      component: planning,
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: dashboard,
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: profile,
+      meta: {
+        requireAuth: true
+      }
+    },
   ]
 })
 

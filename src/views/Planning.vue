@@ -2,14 +2,7 @@
   <div>
     
     <!-- Navbar -->
-    
-    <div v-if="isAuth()" >
-        <NavBarOnline v-on:logout="logout" :session='session'/>
-    </div>
-    <div v-else>
-        <NavBarOffline v-on:login="login" :session='session'/>
-    </div>
-
+        <NavBarOnline :session='session'/>
     <!-- Main Page -->
 
     <div class="row m-2" v-if="isAuth()" >
@@ -47,120 +40,46 @@ import NavBarOffline from '../components/NavBarOffline.vue'
 import SideBar from '../components/SideBar.vue'
 import PlanningWeek from '../components/PlanningWeek.vue'
 import PlanningMonth from '../components/PlanningMonth.vue'
-import Alerts from '../components/Alerts.vue'
 
-const planning = [
-  {
-    id: 1,
-    name: "rendez vous médecin",
-    userId: 1,
-    dateEventBegin: "2018-11-05T08:00",
-    dateEventEnd: "2018-11-05T09:00",
-    type: ""
-  },
-  {
-    id: 2,
-    name: "mise en prod",
-    userId: 1,
-    dateEventBegin: "2018-11-05T09:00",
-    dateEventEnd: "2018-11-05T011:00",
-    type: ""
-  },
-  {
-    id: 3,
-    name: "réunion fin de projet",
-    userId: 1,
-    dateEventBegin: "2018-11-07T08:00",
-    dateEventEnd: "2018-11-08T10:00",
-    type: ""
-  },
-  {
-    id: 4,
-    name: "montage vidéo",
-    userId: 2,
-    dateEventBegin: "2018-11-05T08:00",
-    dateEventEnd: "2018-11-05T08:00",
-    type: ""
-  },
-  {
-    id: 5,
-    name: "pause café",
-    userId: 2,
-    dateEventBegin: "2018-11-05T08:00",
-    dateEventEnd: "2018-11-05T08:00",
-    type: ""
-  }
-]
-const users = [
-  {
-    id : 1,
-    name : "jeandot",
-    firstname : "teofilo",
-    password : "bloup",
-    mail : "teofilo.jeandot@ynov.com",
-    address : "Nantes",
-    birthDate : "1996/02/23",
-    phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
-    status : "salarié"
-  },
-   {
-    id : 2,
-    name : "bar",
-    firstname : "foo",
-    password : "bloup",
-    mail : "foo.bar@ynov.com",
-    address : "Nantes",
-    birthDate : "1996/02/23",
-    phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
-    status : "responsable"
-  },
-   {
-    id : 3,
-    name : "michalon",
-    firstname : "jack",
-    password : "bloup",
-    mail : "jack.michalon@ynov.com",
-    address : "Nantes",
-    birthDate : "1996/02/23",
-    phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
-    status : "drh"
-  }        
-]
-const roles = [
-  "salarié","drh","responsable"
-]
 export default {
   components: {
-    NavBarOnline, NavBarOffline, SideBar, PlanningWeek, PlanningMonth, Alerts
+    NavBarOnline, NavBarOffline, SideBar, PlanningWeek, PlanningMonth
   },
   name: 'planning',
   data () {
     return {
-      planning: planning,
+      planning: [],
       selectedDateBegin: "20",
       selectedDateEnd: "",
       selectedMonth: "",
       toggleMonthView : false,
-      alert : "",
-      users: users,
+      users: [],
       session : {
         isActive: false
       },
+    }
+  },
+  created(){
+    if (localStorage.getItem('session')) {
+      try {
+        this.session = JSON.parse(localStorage.getItem('session'));
+      } catch(e) {
+        localStorage.removeItem('session');
+      }
+    }
+    if (localStorage.getItem('planning')) {
+      try {
+        this.planning = JSON.parse(localStorage.getItem('planning'));
+      } catch(e) {
+        localStorage.removeItem('planning');
+      }
+    }
+    if (localStorage.getItem('users')) {
+      try {
+        this.users = JSON.parse(localStorage.getItem('users'));
+      } catch(e) {
+        localStorage.removeItem('users');
+      }
     }
   },
   mounted() {
@@ -171,40 +90,22 @@ export default {
         localStorage.removeItem('session');
       }
     }
+    if (localStorage.getItem('planning')) {
+      try {
+        this.planning = JSON.parse(localStorage.getItem('planning'));
+      } catch(e) {
+        localStorage.removeItem('planning');
+      }
+    }
+    if (localStorage.getItem('users')) {
+      try {
+        this.users = JSON.parse(localStorage.getItem('users'));
+      } catch(e) {
+        localStorage.removeItem('users');
+      }
+    }
   },
   methods: {
-    // Auth
-    login:function(formEmail, formPassword){
-      var found = false
-      var i = 0
-      while(i < users.length && !found){
-          //console.log("fE :" + formEmail + " fP : " + formPassword)
-          //console.log("bE :" + users[i].mail + " bP : " + users[i].password)
-          if(users[i].mail == formEmail && users[i].password == formPassword){            
-            found = true
-          }else{
-            i++
-          }        
-      }
-      if (found){
-        this.session = {
-            isActive: true,                
-            user :  users[i]
-        }
-        const parsed = JSON.stringify(this.session);
-        localStorage.setItem('session', parsed);
-      }else{
-        alert = "Bad email or password"
-      }
-          
-    },
-    logout:function(){
-        this.session = {
-            isActive: false
-        }
-        localStorage.removeItem('session');
-        
-    },
     isAuth:function(){
       if (this.session.isActive){
         return true
@@ -226,7 +127,7 @@ export default {
       return this.toggleMonthView
     },
     togglePlanningView:function(){
-        this.toggleMonthView = this.toggleMonthView == true ? false : true
+        this.toggleMonthView = !this.toggleMonthView
     },
   }
 }
