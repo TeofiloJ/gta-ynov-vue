@@ -11,7 +11,7 @@
     <b-navbar-nav>
       <b-nav-item :to="'/planning'"></router-link>Planning</b-nav-item>
       <b-nav-item :to="'/dashboard'">Dashboard</b-nav-item>
-      <b-nav-item :to="'/administration'" v-if="session.user.role == 'drh'">Administration</b-nav-item>
+      <b-nav-item :to="'/administration'" v-if="this.$session.get('user').role == 'drh'">Administration</b-nav-item>
     </b-navbar-nav>
 
     <!-- Right aligned nav items -->
@@ -20,7 +20,7 @@
       <b-nav-item-dropdown right>
         <!-- Using button-content slot -->
         <template slot="button-content">
-          <em>{{session.user.firstname}}</em>
+          <em>{{this.$session.get('user').firstname}}</em>
         </template>
         <b-dropdown-item :to="'/profile'">Profile</b-dropdown-item>
         <b-dropdown-item v-on:click="logout" >Signout</b-dropdown-item>
@@ -43,15 +43,11 @@ export default {
   },
   methods:{
     logout:function(){
-        localStorage.removeItem('session');
-        this.$router.push('/')        
+      this.$session.destroy()
+      this.$router.push('/')      
     },
   },
   props: {
-    session: {
-      type: Object,
-      required: true
-    }
   }
 
 };

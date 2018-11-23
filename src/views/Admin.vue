@@ -60,7 +60,7 @@ export default {
   components: {
     NavBarOnline, AddUser, DisplayBilan
   },
-  name: "planning",
+  name: "admin",
   data() {
     return {
       tabComponent: [
@@ -80,8 +80,22 @@ export default {
   },
   created() {
 
+    if (localStorage.getItem("session")) {
+      try {
+        this.session = JSON.parse(localStorage.getItem("session"));
+      } catch (e) {
+        localStorage.removeItem("session");
+      }
+    }
   },
   mounted() {
+    if (localStorage.getItem("session")) {
+      try {
+        this.session = JSON.parse(localStorage.getItem("session"));
+      } catch (e) {
+        localStorage.removeItem("session");
+      }
+    }
   },
   methods: {
     initTabComponent: function() {

@@ -106,13 +106,9 @@ export default {
           }        
       }
       if (found){
-        var session = {
-            isActive: true,                
-            user :  users[i]
-        }
-        const parsed = JSON.stringify(session);
-        localStorage.setItem('session', parsed);
-        this.$router.push('dashboard')
+        this.$session.start()
+        this.$session.set('user',users[i])
+        this.$router.push('/dashboard')      
       }else{
           this.errorMessage = "False email or password"
       }

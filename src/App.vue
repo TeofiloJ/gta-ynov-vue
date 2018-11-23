@@ -67,11 +67,6 @@ const users = [
     address : "Nantes",
     birthDate : "1996/02/23",
     phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
     status : "salarié"
   },
    {
@@ -83,11 +78,6 @@ const users = [
     address : "Nantes",
     birthDate : "1996/02/23",
     phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
     status : "responsable"
   },
    {
@@ -99,16 +89,12 @@ const users = [
     address : "Nantes",
     birthDate : "1996/02/23",
     phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
     status : "drh"
   }        
 ]
-const roles = [
-  "salarié","drh","responsable"
+
+const contrats = [
+
 ]
 
 export default {

@@ -31,14 +31,12 @@
 import { EventBus } from '../main.js';
 
 
-const previousEvent = {
-
-}
-
 export default {
   components: {},
   data() {
     return {
+      planning: [],
+      users: [],
       planningSorted : {
         lundi:{
           jour : "L",
@@ -80,6 +78,36 @@ export default {
       this.renderPlanning()
 
     });
+    if (localStorage.getItem('planning')) {
+      try {
+        this.planning = JSON.parse(localStorage.getItem('planning'));
+      } catch(e) {
+        localStorage.removeItem('planning');
+      }
+    }
+    if (localStorage.getItem('users')) {
+      try {
+        this.users = JSON.parse(localStorage.getItem('users'));
+      } catch(e) {
+        localStorage.removeItem('users');
+      }
+    }
+  },
+  mounted(){
+    if (localStorage.getItem('planning')) {
+      try {
+        this.planning = JSON.parse(localStorage.getItem('planning'));
+      } catch(e) {
+        localStorage.removeItem('planning');
+      }
+    }
+    if (localStorage.getItem('users')) {
+      try {
+        this.users = JSON.parse(localStorage.getItem('users'));
+      } catch(e) {
+        localStorage.removeItem('users');
+      }
+    }
   },
   methods: {
     renderPlanning:function(){
@@ -137,14 +165,6 @@ export default {
     
   },
   props: {
-    session: {
-      type: Object,
-      required: true
-    },
-    planning: {
-      type: Array,
-      required: true
-    }
   }
 };
 </script>

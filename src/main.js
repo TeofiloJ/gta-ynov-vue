@@ -10,6 +10,10 @@ import planning from './views/Planning.vue'
 import login from './views/Login.vue'
 import dashboard from './views/Dashboard.vue'
 import profile from './views/Profile.vue'
+import admin from './views/Admin.vue'
+
+import VueSession from 'vue-session'
+Vue.use(VueSession)
 
 Vue.use(VueRouter)
 Vue.use(BootstrapVue)
@@ -24,7 +28,8 @@ const router = new VueRouter({
       name: 'login',
       component: login,
       meta: {
-        requireAuth: false
+        requireAuth: false,
+        permission: 0
       }
     },
     {
@@ -32,7 +37,8 @@ const router = new VueRouter({
       name: 'planning',
       component: planning,
       meta: {
-        requireAuth: true
+        requireAuth: true,
+        permission: 1
       }
     },
     {
@@ -40,7 +46,8 @@ const router = new VueRouter({
       name: 'dashboard',
       component: dashboard,
       meta: {
-        requireAuth: true
+        requireAuth: true,
+        permission: 1
       }
     },
     {
@@ -48,10 +55,28 @@ const router = new VueRouter({
       name: 'profile',
       component: profile,
       meta: {
-        requireAuth: true
+        requireAuth: true,
+        permission:1
+      }
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: admin,
+      meta: {
+        requireAuth: true,
+        permission:10
       }
     },
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  if(to.meta.requireAuth && !router.app.$session.exists()){
+    next('/')
+  }else{
+    next()
+  }
 })
 
 new Vue({

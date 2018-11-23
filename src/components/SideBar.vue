@@ -3,7 +3,7 @@
     <!-- isAuth -->
     <div id="sidebar">
 
-        <span>Bonjour {{session.user.firstname}}</span>
+        <span>Bonjour {{this.$session.get('user').firstname}}</span>
 
         <div class="container">    
 
@@ -25,11 +25,11 @@
         </div>
 
 
-        <div v-if="session.user.status == 'salarié'">
+        <div v-if="this.$session.get('user').status == 'salarié'">
             <h1>IF</h1>
 
         </div>
-        <div v-else-if="this.session.user.mail == 'LOL' ">
+        <div v-else-if="this.this.$session.get('user').mail == 'LOL' ">
                 <h1> ELSEIF</h1>
         </div>
         <div v-else>
@@ -58,10 +58,10 @@ export default {
   },
   methods: {
     getUserPlanning:function(){
-      if(session.user.role != "responsable"){
-        this.selectedUser = session.user.id
+      if(this.$session.get('user').role != "responsable"){
+        this.selectedUser = this.$session.get('user').id
       }else{
-        this.selectedUser = session.user.id // a changer pour prendre en compte la selection d'un collaborateur
+        this.selectedUser = this.$session.get('user').id // a changer pour prendre en compte la selection d'un collaborateur
       }
     },
     setSelectedWeek:function(){
@@ -81,10 +81,6 @@ export default {
     },
   },
   props: {
-    session: {
-      type: Object,
-      required: true
-    },
     toggleMonthView: {
       type: Boolean,
       required: true

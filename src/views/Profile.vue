@@ -43,65 +43,10 @@
 
 <script>
 import NavBarOnline from '../components/NavBarOnline.vue'
-import NavBarOffline from '../components/NavBarOffline.vue'
 
-
-const users = [
-  {
-    id : 1,
-    name : "jeandot",
-    firstname : "teofilo",
-    password : "bloup",
-    mail : "teofilo.jeandot@ynov.com",
-    address : "Nantes",
-    birthDate : "1996/02/23",
-    phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
-    status : "salarié"
-  },
-   {
-    id : 2,
-    name : "bar",
-    firstname : "foo",
-    password : "bloup",
-    mail : "foo.bar@ynov.com",
-    address : "Nantes",
-    birthDate : "1996/02/23",
-    phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
-    status : "responsable"
-  },
-   {
-    id : 3,
-    name : "michalon",
-    firstname : "jack",
-    password : "bloup",
-    mail : "jack.michalon@ynov.com",
-    address : "Nantes",
-    birthDate : "1996/02/23",
-    phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
-    status : "drh"
-  }        
-]
-const roles = [
-  "salarié","drh","responsable"
-]
 export default {
   components: {
-    NavBarOnline, NavBarOffline
+    NavBarOnline
   },
   name: 'planning',
   data () {

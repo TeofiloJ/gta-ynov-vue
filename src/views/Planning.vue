@@ -2,30 +2,25 @@
   <div>
     
     <!-- Navbar -->
-        <NavBarOnline :session='session'/>
+        <NavBarOnline />
     <!-- Main Page -->
 
-    <div class="row m-2" v-if="isAuth()" >
+    <div class="row m-2" >
        
         <!-- Left Sidebar -->
         <div class="col-lg-3">
-           <SideBar class="sidebar" :session="session" :toggleMonthView="toggleMonthView" v-on:togglePlanningView="togglePlanningView"></SideBar>
+           <SideBar class="sidebar":toggleMonthView="toggleMonthView" v-on:togglePlanningView="togglePlanningView"></SideBar>
         </div>
 
         <!-- Center -->
         <div class="col-lg-9">
             <div v-if="!isPlanningViewMonth()">
-                <PlanningWeek class="planning"  :planning='planning' :session='session' />
+                <PlanningWeek class="planning" :planning='planning'  />
             </div>
             <div v-else>
-                <PlanningMonth class="planning"  :planning='planning' :session='session' />
+                <PlanningMonth class="planning" :planning='planning'  />
             </div>
             
-        </div>
-
-    </div>
-    <div class="row mt-3" v-else>
-        <div class="col-md-12">
         </div>
     </div>
     
@@ -36,14 +31,13 @@
 
 <script>
 import NavBarOnline from '../components/NavBarOnline.vue'
-import NavBarOffline from '../components/NavBarOffline.vue'
 import SideBar from '../components/SideBar.vue'
 import PlanningWeek from '../components/PlanningWeek.vue'
 import PlanningMonth from '../components/PlanningMonth.vue'
 
 export default {
   components: {
-    NavBarOnline, NavBarOffline, SideBar, PlanningWeek, PlanningMonth
+    NavBarOnline, SideBar, PlanningWeek, PlanningMonth
   },
   name: 'planning',
   data () {
@@ -53,20 +47,10 @@ export default {
       selectedDateEnd: "",
       selectedMonth: "",
       toggleMonthView : false,
-      users: [],
-      session : {
-        isActive: false
-      },
+      users: []
     }
   },
   created(){
-    if (localStorage.getItem('session')) {
-      try {
-        this.session = JSON.parse(localStorage.getItem('session'));
-      } catch(e) {
-        localStorage.removeItem('session');
-      }
-    }
     if (localStorage.getItem('planning')) {
       try {
         this.planning = JSON.parse(localStorage.getItem('planning'));
@@ -83,13 +67,6 @@ export default {
     }
   },
   mounted() {
-    if (localStorage.getItem('session')) {
-      try {
-        this.session = JSON.parse(localStorage.getItem('session'));
-      } catch(e) {
-        localStorage.removeItem('session');
-      }
-    }
     if (localStorage.getItem('planning')) {
       try {
         this.planning = JSON.parse(localStorage.getItem('planning'));
@@ -106,22 +83,6 @@ export default {
     }
   },
   methods: {
-    isAuth:function(){
-      if (this.session.isActive){
-        return true
-      }
-      return false        
-    },
-    // Permission
-    gotPermission:function(){
-    },
-    // Planning
-    createEvent:function(){
-    },
-    updateEvent:function(){
-    },
-    deleteEvent:function(){
-    },
     // Others
     isPlanningViewMonth:function(){
       return this.toggleMonthView
