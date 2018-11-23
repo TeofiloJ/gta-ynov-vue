@@ -8,52 +8,52 @@
                     <b-row class="">
                         <b-col sm="3"><label for="email">Email:</label></b-col>
                         <b-col sm="9">
-                        <b-form-input id="email" type="email" size="sm" placeholder="foobar@domain.com"></b-form-input>
+                        <b-form-input id="email" v-model="userToAdd.email" type="email" size="sm" placeholder="foobar@domain.com"></b-form-input>
                         </b-col>
                     </b-row>
                     <b-row class="">
                         <b-col sm="3"><label for="firstname">Prénom:</label></b-col>
                         <b-col sm="9">
-                        <b-form-input id="firstname" size="sm" type="text" placeholder="foo"></b-form-input>
+                        <b-form-input id="firstname" v-model="userToAdd.firstname" size="sm" type="text" placeholder="foo"></b-form-input>
                         </b-col>
                     </b-row>
                     <b-row class="">
                         <b-col sm="3"><label for="name">Nom:</label></b-col>
                         <b-col sm="9">
-                        <b-form-input id="name" size="sm" type="text" placeholder="bar"></b-form-input>
+                        <b-form-input id="name" v-model="userToAdd.name" size="sm" type="text" placeholder="bar"></b-form-input>
                         </b-col>
                     </b-row>
                     <b-row class="">
                         <b-col sm="3"><label for="pwd">Password:</label></b-col>
                         <b-col sm="9">
-                        <b-form-input id="pwd" type="password" size="sm"placeholder="********"></b-form-input>
+                        <b-form-input id="pwd" v-model="userToAdd.password" type="password" size="sm"placeholder="********"></b-form-input>
                         </b-col>
                     </b-row>
                         
                     <b-row class="">
                         <b-col sm="3"><label for="address">Adresse:</label></b-col>
                         <b-col sm="9">
-                        <b-form-input id="address" size="sm" type="text" placeholder="Nantes"></b-form-input>
+                        <b-form-input id="address" v-model="userToAdd.address" size="sm" type="text" placeholder="Nantes"></b-form-input>
                         </b-col>
                     </b-row>
                     <b-row class="">
                         <b-col sm="3"><label for="birthDate">Date de naissance:</label></b-col>
                         <b-col sm="9">
-                        <b-form-input id="birthDate" type="date" size="sm" placeholder="1996/02/23"></b-form-input>
+                        <b-form-input id="birthDate" v-model="userToAdd.birthDate" type="date" size="sm" placeholder="1996/02/23"></b-form-input>
                         </b-col>
                     </b-row>
                     <b-row class="">
                         <b-col sm="3"><label for="phone">Téléphone:</label></b-col>
                         <b-col sm="9">
-                        <b-form-input id="phone" type="tel" size="sm" placeholder="06 06 06 06 06"></b-form-input>
+                        <b-form-input id="phone" v-model="userToAdd.phone" type="tel" size="sm" placeholder="06 06 06 06 06"></b-form-input>
                         </b-col>
                     </b-row>
                     <b-row class="">
                         <b-col sm="3"><label for="status">Status:</label></b-col>
                         <b-col sm="9">
                             <div class="form-group">
-                                <select size="sm" class="form-control" id="status">
-                                <option value="" + role v-for="role in roles">{{role}}</option>
+                                <select v-model="userToAdd.status" size="sm" class="form-control" id="status">
+                                <option v-for="role in roles" v-bind:value='role' :key="role">{{role}}</option>
                                 </select>
                             </div>
                         </b-col>
@@ -139,7 +139,7 @@ export default {
   data () {
     return {
         roles:roles,
-        contract : {
+        contrat : {
             idUser: -1,
             dateBegin: "2018-11-01T09:00",
             dateEnd: "2018-11-01T17:00",

@@ -74,6 +74,8 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if(to.meta.requireAuth && !router.app.$session.exists()){
     next('/')
+  }else if(to.name == "login" && router.app.$session.exists()){
+    next('/dashboard')
   }else{
     next()
   }
