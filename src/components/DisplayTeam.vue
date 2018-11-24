@@ -1,16 +1,9 @@
 <template>
 
-      <b-container fluid>
-        <b-row>
-          <b-col md="12">
-            <p>HELLO</p>
-          </b-col>
-        </b-row>
-        <b-row class="mt-2">
-          <b-col>
+    <b-container fluid>
 
-          </b-col>            
-        </b-row>      
+        <p>Bilan</p>
+      
     </b-container>
 
 </template>

@@ -2,9 +2,8 @@
   <div id="app">
 
 
-
-    <!-- <transition name="fade" mode="out-in"> -->
-    <transition>
+    <NavBarOnline v-if="this.$session.exists()" />
+    <transition name="fade" mode="out-in">
       <router-view/>
     </transition>
 
@@ -13,6 +12,8 @@
 </template>
 
 <script>
+
+import NavBarOnline from "./components/NavBarOnline.vue"
 
 
 const planning = [
@@ -65,9 +66,9 @@ const users = [
     password : "bloup",
     mail : "teofilo.jeandot@ynov.com",
     address : "Nantes",
-    birthDate : "1996/02/23",
+    birthDate : "1996-02-23",
     phone : "06 06 06 06 06",
-    status : "salarié"
+    status : "administrateur"
   },
    {
     id : 2,
@@ -76,7 +77,7 @@ const users = [
     password : "bloup",
     mail : "foo.bar@ynov.com",
     address : "Nantes",
-    birthDate : "1996/02/23",
+    birthDate : "1996-02-23",
     phone : "06 06 06 06 06",
     status : "responsable"
   },
@@ -87,9 +88,9 @@ const users = [
     password : "bloup",
     mail : "jack.michalon@ynov.com",
     address : "Nantes",
-    birthDate : "1996/02/23",
+    birthDate : "1996-02-23",
     phone : "06 06 06 06 06",
-    status : "drh"
+    status : "collaborateur"
   }        
 ]
 
@@ -99,6 +100,7 @@ const contrats = [
 
 export default {
   components: {
+    NavBarOnline
   },
   name: 'app',
   data () {

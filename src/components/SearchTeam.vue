@@ -41,7 +41,7 @@
 export default {
   components: {
   },
-  name: 'search',
+  name: 'SearchTeam',
   data () {
     return {
       users: [],
@@ -74,7 +74,7 @@ export default {
       console.log(this.searchInput)
       for (var user of this.users) {
         console.log(user)
-        if (user.name.includes(this.searchInput) || user.firstname.includes(this.searchInput) || user.mail.includes(this.searchInput)) {
+        if (user.name.includes(this.searchInput) || user.firstname.includes(this.searchInput) || user.mail.includes(this.searchInput) || user.status.includes(this.searchInput)) {
           this.usersSelected.push(user)          
         }
       }

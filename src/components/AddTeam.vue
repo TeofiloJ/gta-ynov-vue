@@ -3,7 +3,7 @@
     <b-container fluid>
         <b-row align-h="center">
             <b-col md="7">
-                    <p>Ajouter un utilisateur</p>
+                    <p>Ajouter une équipe</p>
 
                     <b-row class="">
                         <b-col sm="3"><label for="email">Email:</label></b-col>

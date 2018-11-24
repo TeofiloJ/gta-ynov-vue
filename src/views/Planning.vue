@@ -2,7 +2,7 @@
   <div>
     
     <!-- Navbar -->
-        <NavBarOnline />
+
     <!-- Main Page -->
 
     <div class="row m-2" >
