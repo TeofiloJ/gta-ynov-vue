@@ -5,128 +5,140 @@
         <div class="title row pl-3">
           <p class="">{{this.$moment(this.beginOfMonth).format('MMMM YYYY')}}</p>
         </div>
-        <div class="row pb-2">
-          <div class="col">L</div>
-          <div class="col">M</div>
-          <div class="col">M</div>
-          <div class="col">J</div>
-          <div class="col">V</div>
-          <div class="col hide">S</div>
-          <div class="col hide">D</div>
-        </div>
+        <b-row class="row mb-2">
+          <b-col class="col item">L</b-col>
+          <b-col class="col item">M</b-col>
+          <b-col class="col item">M</b-col>
+          <b-col class="col item">J</b-col>
+          <b-col class="col item">V</b-col>
+          <b-col class="col item hide">S</b-col>
+          <b-col class="col item hide">D</b-col>
+        </b-row>
         <div class="row d-flex align-items-end mb-1">
-          <div class="col" v-for="event in this.planningSorted.slice(0, 7)">
+          <div :key="event.id"  class="col" v-for="event in this.planningSorted.slice(0, 5)">
             <div v-if="event.type == 'buffer'"> <!-- buffer -->
-              <span>&nbsp;&nbsp;</span>
+              <p class="item">&nbsp;&nbsp;</p>
             </div>
             <div v-else-if="event.type == 'week'"> <!-- semaine -->
-              <div v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
-                <b>0{{event.jour}}</b>
+              <div @click="getDetailsOfDay(event.events)" v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
+                <p class="item"><b>0{{event.jour}}</b></p>
               </div>
               <div v-else class="noTask">
-                0{{event.jour}}
+                <p class="item">0{{event.jour}}</p>
               </div>
             </div>
-            <div v-else class="weekend hide"> <!-- weekend hide -->
-              0{{event.jour}}
+          </div>
+          <div  :key="event.id"  class="col weekend hide" v-for="event in this.planningSorted.slice(5, 7)">
+            <div v-if="event.jour != 'error'"> <!-- weekend hide -->
+              <p class="item">0{{event.jour}}</p> 
             </div>
           </div>
         </div>
 
         <div class="row d-flex justify-content-between mb-1">
-          <div class="col" v-for="event in this.planningSorted.slice(7, 14)">
+          <div :key="event.id"  class="col" v-for="event in this.planningSorted.slice(7, 12)">
             <div v-if="event.type == 'buffer'"> <!-- buffer -->
-              <p>-</p>
+              <p class="item">-</p>
             </div>
             <div v-else-if="event.type == 'week'"> <!-- semaine -->
-              <div v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
-                <b v-if="event.jour < 10">0{{event.jour}}</b>
-                <b v-else>{{event.jour}}</b>
+              <div @click="getDetailsOfDay(event.events)" v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
+                <p class="item" v-if="event.jour < 10"><b  >0{{event.jour}}</b></p>
+                <p class="item" v-else><b  >{{event.jour}}</b></p>
               </div>
               <div v-else class="noTask">
-                <span v-if="event.jour < 10">0{{event.jour}}</span>
-                <span v-else>{{event.jour}}</span>
+                <p  class="item" v-if="event.jour < 10">0{{event.jour}}</p>
+                <p  class="item" v-else>{{event.jour}}</p>
               </div>
             </div>
-            <div v-else class="weekend hide"> <!-- weekend hide -->
-              <span v-if="event.jour < 10">0{{event.jour}}</span>
-              <span v-else>{{event.jour}}</span>
+          </div>
+          <div  :key="event.id"  class="col weekend hide" v-for="event in this.planningSorted.slice(12, 14)">
+            <div> <!-- weekend hide -->
+              <p  class="item" v-if="event.jour < 10">0{{event.jour}}</p>
+              <p  class="item" v-else>{{event.jour}}</p>
             </div>
           </div>
         </div>
 
         <div class="row d-flex justify-content-between mb-1">
-          <div class="col" v-for="event in this.planningSorted.slice(14, 21)">
+          <div :key="event.id" class="col" v-for="event in this.planningSorted.slice(14, 19)">
             <div v-if="event.type == 'buffer'"> <!-- buffer -->
-              <p>-</p>
+              <p class="item">-</p>
             </div>
             <div v-else-if="event.type == 'week'"> <!-- semaine -->
-              <div v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
-                <b>{{event.jour}}</b>
+              <div @click="getDetailsOfDay(event.events)" v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
+                <p class="item"><b >{{event.jour}}</b></p>
               </div>
               <div v-else class="noTask">
-                {{event.jour}}
+                <p class="item">{{event.jour}}</p>
               </div>
             </div>
-            <div v-else class="weekend hide"> <!-- weekend hide -->
-              {{event.jour}}
+          </div>
+          <div  :key="event.id"  class="col weekend hide" v-for="event in this.planningSorted.slice(19, 21)">
+            <div> <!-- weekend hide -->
+                <p class="item">{{event.jour}}</p>
             </div>
           </div>
         </div>
 
         <div class="row d-flex justify-content-between mb-1">
-          <div class="col" v-for="event in this.planningSorted.slice(21, 28)">
+          <div :key="event.id" class="col" v-for="event in this.planningSorted.slice(21, 26)">
             <div v-if="event.type == 'buffer'"> <!-- buffer -->
-              <p>-</p>
+              <p class="item">-</p>
             </div>
             <div v-else-if="event.type == 'week'"> <!-- semaine -->
-              <div v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
-                <b>{{event.jour}}</b>
+              <div @click="getDetailsOfDay(event.events)" v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
+                <p class="item"><b >{{event.jour}}</b></p>
               </div>
               <div v-else class="noTask">
-                {{event.jour}}
+                <p class="item">{{event.jour}}</p>
               </div>
             </div>
-            <div v-else class="weekend hide"> <!-- weekend hide -->
-              {{event.jour}}
+          </div>
+          <div :key="event.id"   class="col weekend hide" v-for="event in this.planningSorted.slice(26, 28)">
+            <div> <!-- weekend hide -->
+                <p class="item">{{event.jour}}</p>
             </div>
           </div>
         </div>
 
         <div class="row d-flex justify-content-between mb-1">
-          <div class="col" v-for="event in this.planningSorted.slice(28, 35)">
+          <div :key="event.id"  class="col" v-for="event in this.planningSorted.slice(28, 33)">
             <div class="hide" v-if="event.type == 'buffer'"> <!-- buffer -->
-              <p>&nbsp;&nbsp;</p>
+              <p class="item">&nbsp;&nbsp;</p>
             </div>
             <div v-else-if="event.type == 'week'"> <!-- semaine -->
-              <div v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
-                <b>{{event.jour}}</b>
+              <div @click="getDetailsOfDay(event.events)" v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
+                <p class="item"><b >{{event.jour}}</b></p>
               </div>
               <div v-else class="noTask">
-                {{event.jour}}
+                <p class="item">{{event.jour}}</p>
               </div>
             </div>
-            <div v-else class="weekend hide"> <!-- weekend hide -->
-              {{event.jour}}
+          </div>
+          <div  :key="event.id"  class="col weekend hide" v-for="event in this.planningSorted.slice(33, 35)">
+            <div v-if="event.jour != 'error'"> <!-- weekend hide -->
+                <p class="item">{{event.jour}}</p>
             </div>
           </div>
         </div>
 
         <div v-if="this.planningSorted[35].jour != 'error'" class="row d-flex justify-content-between mb-1">
-          <div class="col" v-for="event in this.planningSorted.slice(35, 42)">
+          <div :key="event.id"  class="col" v-for="event in this.planningSorted.slice(35, 40)">
             <div class="hide" v-if="event.type == 'buffer'"> <!-- buffer -->
-              <span>&nbsp;&nbsp;</span>
+              <p class="item">&nbsp;&nbsp;</p>
             </div>
             <div v-else-if="event.type == 'week'"> <!-- semaine -->
-              <div v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
-                <b>{{event.jour}}</b>
+              <div @click="getDetailsOfDay(event.events)" v-if="event.nbEvents != 0" class="task" v-b-popover.hover="'nombre de tâches : ' + event.nbEvents" title="Détail journée">
+                <p class="item"><b>{{event.jour}}</b></p>
               </div>
               <div v-else class="noTask">
-                {{event.jour}}
+                <p class="item">{{event.jour}}</p>
               </div>
             </div>
-            <div v-else class="weekend hide"> <!-- weekend hide -->
-              {{event.jour}}
+          </div>
+          <div :key="event.id"   class="col weekend hide" v-for="event in this.planningSorted.slice(40, 42)">
+            <div v-if="event.jour != 'error'"> <!-- weekend hide -->
+                <p class="item">{{event.jour}}</p>
             </div>
           </div>
         </div>
@@ -135,10 +147,11 @@
         
     <!-- Liste events du jour selectionné -->
     <div class="list-event mt-3">
-      <div class="row border-bottom border-dark ml-3 mr-3 mb-3 pb-1" v-for="event in this.eventsList">
+      <div  :key="event.id" class="row border-bottom border-dark ml-3 mr-3 mb-3 pb-1" v-for="event in this.eventsList">
         <div class="box d-table">
-          <div :class="['col-xs-2', '', 'mr-3', 'pr-3', 'border-right', 'border-'+ event.type]"><b>{{$moment(event.dateEventBegin).format('HH:mm') }}</b><br>{{$moment(event.dateEventEnd).format('HH:mm') }} </div>
-          <div class="d-table-cell align-middle">{{event.name}}</div>
+          <div :class="['col-xs-2', , 'mr-2', 'pr-2', 'border-right']"><b>{{$moment(event.dateEventBegin).format('HH:mm') }}</b><br>{{$moment(event.dateEventEnd).format('HH:mm') }} </div>
+          <div class="d-table-cell align-middle col-xs-2 mr-2 pr-2 border-right"><b>{{event.type}}</b></div>
+          <div class="d-table-cell align-middle pl-2">{{event.name}}</div>
         </div>                
       </div>
     </div>
@@ -166,28 +179,13 @@ export default {
       endOfMonth :"",
       startBuffer: 0,
       endBuffer: 0,
-      eventsList : [{
-          id: 1,
-          name: "rendez vous médecin",
-          userId: 1,
-          dateEventBegin: "2018-11-05T08:00",
-          dateEventEnd: "2018-11-05T09:00",
-          type: "warning"
-        },
-        {
-          id: 2,
-          name: "mise en prod",
-          userId: 1,
-          dateEventBegin: "2018-11-05T09:00",
-          dateEventEnd: "2018-11-05T11:00",
-          type: "info"
-        }
-      ]
+      eventsList : []
     };
   },
   created() {
     // Using the service bus
     EventBus.$on('setSelectedMonth', (selectedMonth, selectedUserId) => {
+      this.eventsList = []
       this.startBuffer = 0
       this.endOfMonth = 0
       this.selectedUserId = selectedUserId
@@ -243,6 +241,13 @@ export default {
   },
   methods:{
     renderPlanning:function(){
+      if (localStorage.getItem('planning')) {
+      try {
+        this.planning = JSON.parse(localStorage.getItem('planning'));
+      } catch(e) {
+        localStorage.removeItem('planning');
+      }
+    }
 
       this.initPlanningSorted()
 
@@ -290,6 +295,10 @@ export default {
           }
         )
       }
+    },
+    getDetailsOfDay:function(events){
+      this.eventsList = []
+      this.eventsList = events      
     }
   },  
   props: {
@@ -298,6 +307,10 @@ export default {
 </script>
 
 <style>
+
+.item{
+  text-align: center;
+}
 
 .list-event{
   padding-bottom: 10px;
@@ -316,7 +329,7 @@ export default {
 }
 
 .task{
-  background-color: darkgoldenrod;
+  background-color: orange;
   border-radius: 5px;
 }
 

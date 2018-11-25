@@ -26,7 +26,7 @@
                     <b-row class="">
                         <b-col sm="3"><label for="pwd">Password:</label></b-col>
                         <b-col sm="9">
-                        <b-form-input id="pwd" v-model="userToAdd.password" type="password" size="sm"placeholder="********"></b-form-input>
+                        <b-form-input id="pwd" v-model="userToAdd.password" type="password" size="sm" placeholder="********"></b-form-input>
                         </b-col>
                     </b-row>
                         
@@ -141,7 +141,8 @@ export default {
         users: [],
         roles:roles,
         contrat : {
-            idUser: -1,
+            id: -1,
+            type: "",
             dateBegin: "2018-11-01T09:00",
             dateEnd: "2018-11-01T17:00",
             nbConges: 35,

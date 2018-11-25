@@ -1,40 +1,7 @@
 <template>
   <div>
     
-    <!-- Navbar -->
-    
-    <div v-if="isAuth()" >
-        <NavBarOnline v-on:logout="logout" :session='session'/>
-    </div>
-    <div v-else>
-        <NavBarOffline v-on:login="login" :session='session'/>
-    </div>
-
-    <!-- Main Page -->
-
-    <div class="row m-2" v-if="isAuth()" >
-       
-        <!-- Left Sidebar -->
-        <div class="col-lg-3">
-           <SideBar class="sidebar" :session="session" :toggleMonthView="toggleMonthView" v-on:togglePlanningView="togglePlanningView"></SideBar>
-        </div>
-
-        <!-- Center -->
-        <div class="col-lg-9">
-            <div v-if="!isPlanningViewMonth()">
-                <PlanningWeek class="planning"  :planning='planning' :session='session' />
-            </div>
-            <div v-else>
-                <PlanningMonth class="planning"  :planning='planning' :session='session' />
-            </div>
-            
-        </div>
-
-    </div>
-    <div class="row mt-3" v-else>
-        <div class="col-md-12">
-        </div>
-    </div>
+    {{this.user}}
     
 
     
@@ -42,107 +9,51 @@
 </template>
 
 <script>
-import NavBarOnline from '../components/NavBarOnline.vue'
-
 export default {
   components: {
-    NavBarOnline
   },
-  name: 'planning',
+  name: 'profile',
   data () {
     return {
-      planning: planning,
-      selectedDateBegin: "20",
-      selectedDateEnd: "",
-      selectedMonth: "",
-      toggleMonthView : false,
-      alert : "",
-      users: users,
-      session : {
-        isActive: false
-      },
+      user : {},
+      users : [],
     }
   },
-  mounted() {
-    if (localStorage.getItem('session')) {
+  created() {
+    if (localStorage.getItem('users')) {
       try {
-        this.session = JSON.parse(localStorage.getItem('session'));
+        this.users = JSON.parse(localStorage.getItem('users'));
       } catch(e) {
-        localStorage.removeItem('session');
+        localStorage.removeItem('users');
       }
     }
+    this.getUserData()
+  },
+  mounted(){
+    if (localStorage.getItem('users')) {
+      try {
+        this.users = JSON.parse(localStorage.getItem('users'));
+      } catch(e) {
+        localStorage.removeItem('users');
+      }
+    }
+    this.getUserData()
   },
   methods: {
-    // Auth
-    login:function(formEmail, formPassword){
-      var found = false
-      var i = 0
-      while(i < users.length && !found){
-          //console.log("fE :" + formEmail + " fP : " + formPassword)
-          //console.log("bE :" + users[i].mail + " bP : " + users[i].password)
-          if(users[i].mail == formEmail && users[i].password == formPassword){            
-            found = true
-          }else{
-            i++
-          }        
-      }
-      if (found){
-        this.session = {
-            isActive: true,                
-            user :  users[i]
+   getUserData:function(){
+      var i = 0;
+      var found = false;
+      while (!found && i < this.users.length ) {
+        if(this.$route.params.id == this.users[i].id){
+          this.user = this.users[i]
+          found = true
         }
-        const parsed = JSON.stringify(this.session);
-        localStorage.setItem('session', parsed);
-      }else{
-        alert = "Bad email or password"
-      }
-          
-    },
-    logout:function(){
-        this.session = {
-            isActive: false
-        }
-        localStorage.removeItem('session');
-        
-    },
-    isAuth:function(){
-      if (this.session.isActive){
-        return true
-      }
-      return false        
-    },
-    // Permission
-    gotPermission:function(){
-    },
-    // Planning
-    createEvent:function(){
-    },
-    updateEvent:function(){
-    },
-    deleteEvent:function(){
-    },
-    // Others
-    isPlanningViewMonth:function(){
-      return this.toggleMonthView
-    },
-    togglePlanningView:function(){
-        this.toggleMonthView = this.toggleMonthView == true ? false : true
-    },
+      }     
+   },
   }
 }
 </script>
 
 <style>
-
-.planning{
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 12px;
-}
-
-.sidebar{
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 12px;
-  
-}
 
 </style>

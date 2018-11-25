@@ -10,7 +10,7 @@ import planning from './views/Planning.vue'
 import login from './views/Login.vue'
 import dashboard from './views/Dashboard.vue'
 import profile from './views/Profile.vue'
-import admin from './views/Admin.vue'
+import account from './views/Account.vue'
 
 import VueSession from 'vue-session'
 Vue.use(VueSession)
@@ -51,7 +51,7 @@ const router = new VueRouter({
       }
     },
     {
-      path: '/profile',
+      path: '/profile/:id',
       name: 'profile',
       component: profile,
       meta: {
@@ -60,12 +60,12 @@ const router = new VueRouter({
       }
     },
     {
-      path: '/admin',
-      name: 'admin',
-      component: admin,
+      path: '/account',
+      name: 'account',
+      component: account,
       meta: {
         requireAuth: true,
-        permission:10
+        permission:1
       }
     },
   ]
@@ -75,8 +75,15 @@ router.beforeEach((to, from, next) => {
   if(to.meta.requireAuth && !router.app.$session.exists()){
     next('/')
   }else if(to.name == "login" && router.app.$session.exists()){
-    next('/dashboard')
-  }else{
+    next('/account')
+  }else if(to.name == "dashboard" && router.app.$session.exists()){
+    if(router.app.$session.get('user').status == "administrateur" || router.app.$session.get('user').status == "responsable"){
+      next()
+    }else{
+      next('/account')
+    }    
+  }
+  else{
     next()
   }
 })

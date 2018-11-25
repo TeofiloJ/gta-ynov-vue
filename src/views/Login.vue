@@ -18,59 +18,6 @@
 
 <script>
 
-const users = [
-  {
-    id : 1,
-    name : "jeandot",
-    firstname : "teofilo",
-    password : "bloup",
-    mail : "teofilo.jeandot@ynov.com",
-    address : "Nantes",
-    birthDate : "1996/02/23",
-    phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
-    status : "salarié"
-  },
-   {
-    id : 2,
-    name : "bar",
-    firstname : "foo",
-    password : "bloup",
-    mail : "foo.bar@ynov.com",
-    address : "Nantes",
-    birthDate : "1996/02/23",
-    phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
-    status : "responsable"
-  },
-   {
-    id : 3,
-    name : "michalon",
-    firstname : "jack",
-    password : "bloup",
-    mail : "jack.michalon@ynov.com",
-    address : "Nantes",
-    birthDate : "1996/02/23",
-    phone : "06 06 06 06 06",
-    contract : {
-      beginning : "2018/09/01",
-      end : "2018/12/31",
-      vacancyLeft : "23"
-    },
-    status : "drh"
-  }        
-]
-const roles = [
-  "salarié","drh","responsable"
-]
 export default {
   components: {
   },
@@ -92,23 +39,33 @@ export default {
       }
     }
   },
+  mounted(){
+    if (localStorage.getItem('users')) {
+      try {
+        this.users = JSON.parse(localStorage.getItem('users'));
+      } catch(e) {
+        localStorage.removeItem('users');
+      }
+    }
+  },
   methods: {
     // Auth
     login:function(){
         this.errorMessage = ""
       var found = false
       var i = 0
-      while(i < users.length && !found){
-          if(users[i].mail == this.formEmail && users[i].password == this.formPassword){            
+      while(i < this.users.length && !found){
+          if(this.users[i].mail == this.formEmail && this.users[i].password == this.formPassword){      
             found = true
           }else{
+
             i++
           }        
       }
       if (found){
         this.$session.start()
-        this.$session.set('user',users[i])
-        this.$router.push('/dashboard')      
+        this.$session.set('user',this.users[i])
+        this.$router.push('/account')      
       }else{
           this.errorMessage = "False email or password"
       }

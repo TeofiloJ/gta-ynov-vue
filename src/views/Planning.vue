@@ -4,16 +4,15 @@
     <!-- Navbar -->
 
     <!-- Main Page -->
-
-    <div class="row m-2" >
+    <div class="row" >
        
         <!-- Left Sidebar -->
-        <div class="col-lg-3">
-           <SideBar class="sidebar":toggleMonthView="toggleMonthView" v-on:togglePlanningView="togglePlanningView"></SideBar>
+        <div class="col-lg-2 mt-2">
+           <SideBar  :toggleMonthView="toggleMonthView" v-on:togglePlanningView="togglePlanningView"></SideBar>
         </div>
 
         <!-- Center -->
-        <div class="col-lg-9">
+        <div class="col-lg-10 mt-2">
             <div v-if="!isPlanningViewMonth()">
                 <PlanningWeek class="planning" :planning='planning'  />
             </div>
@@ -30,14 +29,13 @@
 </template>
 
 <script>
-import NavBarOnline from '../components/NavBarOnline.vue'
 import SideBar from '../components/SideBar.vue'
 import PlanningWeek from '../components/PlanningWeek.vue'
 import PlanningMonth from '../components/PlanningMonth.vue'
 
 export default {
   components: {
-    NavBarOnline, SideBar, PlanningWeek, PlanningMonth
+    SideBar, PlanningWeek, PlanningMonth
   },
   name: 'planning',
   data () {

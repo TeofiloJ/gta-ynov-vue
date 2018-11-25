@@ -4,7 +4,7 @@
         <div class="row">
             <div v-for="data in planningSorted" class="col">
                 <span>{{data.jour}}</span>                  
-                <div v-for="event in data.events">
+                <div :key="event.id" v-for="event in data.events">
                     <div v-if="event.dateEventBegin < calculatedDateEnd">
                           <pre v-b-modal.modal-center="'myModal' + event.id" class="border mb-2 mt-2" style="background-color:white; height:20%">{{event.name}}</pre>
                             <b-modal v-bind:title="event.name" v-bind:id="'myModal' + event.id">
