@@ -10,7 +10,6 @@
 
         <div class="mb-2" v-if="this.$session.get('user').status == 'administrateur'">
 
-            <b-badge variant="warning">Administrateur</b-badge>
               <label for="userlabel">Utilisateur :</label>
               <b-select class="mb-2" v-model="selectedUser" name="userlabel" >
                   <option :key="user.id" :value="user.id" v-for="user in users">{{user.firstname}} {{user.name}}</option>
@@ -20,7 +19,6 @@
         </div>
         <div class="mb-2" v-else-if="this.$session.get('user').status == 'responsable' ">
 
-                <b-badge variant="success">Responsable</b-badge>
               <label for="equipelabel">Equipe :</label>
               <b-form-select class="mb-2" v-model="selectedTeam" name="equipelabel" >
                   <option  @click="emptyUser" v-if="team.members[0].id == $session.get('user').id" :key="team.id" :value="team.id" v-for="team in teams">{{team.name}}</option>
@@ -34,7 +32,6 @@
             <b-btn v-else size="sm"  @click="showModal" >Ajouter un Event</b-btn>
         </div>
         <div class="mb-2" v-else>
-                <b-badge variant="info">Collaborateur</b-badge>
         </div>
 
         <div class="row mb-2">
@@ -126,6 +123,7 @@ export default {
       users: [],
       planning: [],
       errorMessage: "",
+      log: [],
     }
   },
   created(){
@@ -157,6 +155,13 @@ export default {
         localStorage.removeItem('planning');
       }
     }
+    if(localStorage.getItem('log')) {
+      try {
+        this.log = JSON.parse(localStorage.getItem('log'));
+      } catch(e) {
+        localStorage.removeItem('log');
+      }
+    }
   },
   mounted(){
     if (localStorage.getItem('events')) {
@@ -185,6 +190,13 @@ export default {
         this.planning = JSON.parse(localStorage.getItem('planning'));
       } catch(e) {
         localStorage.removeItem('planning');
+      }
+    }
+    if(localStorage.getItem('log')) {
+      try {
+        this.log = JSON.parse(localStorage.getItem('log'));
+      } catch(e) {
+        localStorage.removeItem('log');
       }
     }
   },
@@ -351,6 +363,21 @@ export default {
         }
         
         this.setSelectedMonth()
+          var logData = {
+            user: this.$session.get('user').mail,
+            date: this.$moment(),
+            status:"ADD",
+            content:eventToAdd
+          }
+          this.log.push(logData)
+          if (localStorage.getItem('log')) {
+          try {
+            const parsed = JSON.stringify(this.log);
+            localStorage.setItem('log', parsed);
+          } catch(e) {
+            localStorage.removeItem('log');
+          }
+        }
 
         
           this.errorMessage = ""
@@ -363,10 +390,87 @@ export default {
     },
 
     addEventPeriode:function(){
+      var eventToAdd = {    
+        id: 0,
+        name: "",
+        userId: 1,
+        dateEventBegin: "",
+        dateEventEnd: "",
+        type: ""
+      }
 
+      eventToAdd.id = (this.planning[this.planning.length - 1 ].id + 1)
+      eventToAdd.name = "lorem ipsum"     
+      eventToAdd.userId = this.selectedUser
+      eventToAdd.type = this.motifEvent
 
+      //calcul dateEventBegin
 
-      this.hideModal()
+      var userTemp = {}
+      for (let j = 0; j < this.users.length; j++) {
+        if(this.users[j].id == this.selectedUser)
+          userTemp = this.users[j]
+      }
+
+      console.log("day " + this.$moment(this.$moment(this.dayDate).format('YYYY-MM-DDTHH:mm')).format('YYYY-MM-DDTHH:mm'))
+
+      var i = 0
+      var found = false
+
+      var dateEventBegin = ""
+      var dateEventEnd = ""
+      
+      while(i < userTemp.contrats.length && !found){
+        //on verifie que la date est dans un contrat
+        console.log(this.$moment(userTemp.contrats[i].dateBegin).format('YYYY-MM-DDTHH:mm') + "   " + this.$moment(this.dayDate).format('YYYY-MM-DDTHH:mm') + "    " +this.$moment(userTemp.contrats[i].dateEnd).format('YYYY-MM-DDTHH:mm') )
+        
+        if (this.$moment(userTemp.contrats[i].dateBegin).format('YYYY-MM-DDTHH:mm') <= this.$moment(this.periodeStart).format('YYYY-MM-DDTHH:mm') && this.$moment(userTemp.contrats[i].dateEnd).format('YYYY-MM-DDTHH:mm') >= this.$moment(this.periodeEnd).format('YYYY-MM-DDTHH:mm')) {
+          found = true
+        }else{
+            i++
+        }        
+      }
+
+      if(found){
+        eventToAdd.dateEventBegin = this.periodeStart
+        eventToAdd.dateEventEnd = this.periodeEnd
+        console.log("event"  + eventToAdd.name + " "+ eventToAdd.id + " "+ eventToAdd.userId + " "+ eventToAdd.type + " "+ eventToAdd.dateEventBegin + " "+ eventToAdd.dateEventEnd + " ")
+        console.log("begin"  + dateEventBegin)
+        console.log("end"  + dateEventEnd)
+
+        this.planning.push(eventToAdd)
+        console.log("pish")
+
+        if (localStorage.getItem('planning')) {
+          try {
+            const parsed = JSON.stringify(this.planning);
+            localStorage.setItem('planning', parsed);
+          } catch(e) {
+            localStorage.removeItem('planning');
+          }
+        }
+        
+        this.setSelectedMonth()
+          var logData = {
+            user: this.$session.get('user').mail,
+            date: this.$moment(),
+            status:"ADD",
+            content:eventToAdd
+          }
+          this.log.push(logData)
+          if (localStorage.getItem('log')) {
+          try {
+            const parsed = JSON.stringify(this.log);
+            localStorage.setItem('log', parsed);
+          } catch(e) {
+            localStorage.removeItem('log');
+          }
+        }
+          this.errorMessage = ""
+          this.hideModal()
+      }else{
+          this.errorMessage = "Erreur dans la date (hors contrat, weekend)"
+      }
     }
   },
   props: {

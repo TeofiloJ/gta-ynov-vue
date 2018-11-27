@@ -15,6 +15,8 @@
 
 import NavBarOnline from "./components/NavBarOnline.vue"
 
+const log = []
+
 const teams = [
   {
     id: 1,
@@ -74,13 +76,15 @@ const teams = [
   },
 ]
 
+const planningOld = []
+
 const planning = [
   {
     id: 1,
     name: "rendez vous médecin",
     userId: 1,
-    dateEventBegin: "2018-11-05T08:00",
-    dateEventEnd: "2018-11-05T09:00",
+    dateEventBegin: "2018-11-05T09:00",
+    dateEventEnd: "2018-11-05T12:00",
     type: ""
   },
   {
@@ -95,8 +99,8 @@ const planning = [
     id: 3,
     name: "réunion fin de projet",
     userId: 1,
-    dateEventBegin: "2018-11-07T08:00",
-    dateEventEnd: "2018-11-08T10:00",
+    dateEventBegin: "2018-11-08T08:00",
+    dateEventEnd: "2018-11-09T10:00",
     type: ""
   },
   {
@@ -314,6 +318,15 @@ export default {
         localStorage.removeItem('events');
       }
     }
+    if (!localStorage.getItem('log')) {
+      try {
+        const parsed = JSON.stringify(log);
+        localStorage.setItem('log', parsed);
+      } catch(e) {
+        localStorage.removeItem('log');
+      }
+    }
+    
   },
 
   

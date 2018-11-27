@@ -125,7 +125,72 @@
                 </div>
         </b-col> 
       </b-row>
+
                         </b-tab>
+                                                <b-tab v-if="this.$session.get('user').status == 'administrateur'" title="Motifs" >
+                              <b-row>
+                                <b-col>
+                                                                    <b-form>
+                                    <b-form-input v-model="createInputMotif" type="search" placeholder="Ajouter"/>
+                                  </b-form>
+                                  </b-col>  </b-row>
+
+                                  <b-row>
+                                     <b-col>
+                                    <b-list-group class="mt-2">
+                                      <b-list-group-item style="text-align:center;" @click="createMotif(createInputMotif)" button>Créer un motif</b-list-group-item>
+                                    </b-list-group>      
+                                   
+                                    </b-col>    
+                                    </b-row>        
+                                                        
+
+                                  
+                                  
+                              <b-row>
+                                <b-col>
+                                    <table sty>
+                                      <thead>
+                                        <th>Motif</th>
+                                        <th>Action</th>
+                                      </thead>
+                                      <tbody>
+                                     <tr v-for="monEvent in events">
+                                      <td><b-list-group-item style="text-align:center;">{{monEvent}}</b-list-group-item></td>
+                                      <td style="text-align:center"><i @click="deleteMotif(monEvent)" class="fas fa-trash-alt"></i></td>                              
+                                    </tr>
+                                      </tbody>                                   
+
+                                </table>
+                                </b-col>
+                              </b-row>
+                        </b-tab>
+                        <b-tab v-if="this.$session.get('user').status == 'administrateur'" title="Logs" >
+
+                      <div id="tab2" class="tab-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Utilisateur</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                            <th>Contenu</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="monLog in log">
+                              <td data-label="Utilisateur">{{monLog.user}}</td> 
+                              <td data-label="Date">{{monLog.date}}</td> 
+                                <td data-label="Action">{{monLog.status}}</td>  
+                                 <td data-label="Contenu">{{monLog.content}}</td>
+                             </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                        </b-tab>
+                         </b-tab>
+
                     </b-tabs>
                 </b-card>
             </b-col>
@@ -166,11 +231,11 @@ export default {
           name: "AddUser",
           display: false
         },
-                {
+        {
           name: "SearchUser",
           display: false
         },
-                {
+        {
           name: "DisplayTeam",
           display: false
         },
@@ -178,61 +243,92 @@ export default {
           name: "AddTeam",
           display: false
         },
-                {
+        {
           name: "SearchTeam",
           display: false
         }
       ],
+      createInputMotif: "",
       createInputUser: "",
       users: [],
       teamSelectedToAdd: "",
       teamsNotInUser: [],
       displayUser: false,
-      teamId : 0,
+      teamId: 0,
       teams: [],
-      teamsSelected:[],
+      teamsSelected: [],
       searchInputUser: "",
-      usersSelected:[],
+      usersSelected: [],
       teamsFromUser: [],
       createInputTeam: "",
       users: [],
       userSelectedToAdd: "",
       usersNotInTeam: [],
       displayTeam: false,
-      teamId : 0,
-      teamsSelected:[],
-      searchInputTeam: ""
+      teamId: 0,
+      teamsSelected: [],
+      searchInputTeam: "",
+      log: [],
+      events: []
     };
   },
   created() {
-    if (localStorage.getItem('users')) {
+    if (localStorage.getItem("events")) {
       try {
-        this.users = JSON.parse(localStorage.getItem('users'));
-      } catch(e) {
-        localStorage.removeItem('users');
+        this.events = JSON.parse(localStorage.getItem("events"));
+      } catch (e) {
+        localStorage.removeItem("events");
       }
     }
-    if (localStorage.getItem('teams')) {
+    if (localStorage.getItem("users")) {
       try {
-        this.teams = JSON.parse(localStorage.getItem('teams'));
-      } catch(e) {
-        localStorage.removeItem('teams');
+        this.users = JSON.parse(localStorage.getItem("users"));
+      } catch (e) {
+        localStorage.removeItem("users");
+      }
+    }
+    if (localStorage.getItem("teams")) {
+      try {
+        this.teams = JSON.parse(localStorage.getItem("teams"));
+      } catch (e) {
+        localStorage.removeItem("teams");
+      }
+    }
+    if (localStorage.getItem("log")) {
+      try {
+        this.log = JSON.parse(localStorage.getItem("log"));
+      } catch (e) {
+        localStorage.removeItem("log");
       }
     }
   },
-  mounted(){
-    if (localStorage.getItem('users')) {
+  mounted() {
+    if (localStorage.getItem("events")) {
       try {
-        this.users = JSON.parse(localStorage.getItem('users'));
-      } catch(e) {
-        localStorage.removeItem('users');
+        this.events = JSON.parse(localStorage.getItem("events"));
+      } catch (e) {
+        localStorage.removeItem("events");
       }
     }
-    if (localStorage.getItem('teams')) {
+    if (localStorage.getItem("users")) {
       try {
-        this.teams = JSON.parse(localStorage.getItem('teams'));
-      } catch(e) {
-        localStorage.removeItem('teams');
+        this.users = JSON.parse(localStorage.getItem("users"));
+      } catch (e) {
+        localStorage.removeItem("users");
+      }
+    }
+    if (localStorage.getItem("teams")) {
+      try {
+        this.teams = JSON.parse(localStorage.getItem("teams"));
+      } catch (e) {
+        localStorage.removeItem("teams");
+      }
+    }
+    if (localStorage.getItem("log")) {
+      try {
+        this.log = JSON.parse(localStorage.getItem("log"));
+      } catch (e) {
+        localStorage.removeItem("log");
       }
     }
   },
@@ -244,315 +340,343 @@ export default {
     },
     toggleComponent: function(componentName) {
       this.initTabComponent();
-      var i = 0
-      var flag = false
+      var i = 0;
+      var flag = false;
       while (i < this.tabComponent.length && !flag) {
         if (this.tabComponent[i].name == componentName) {
           this.tabComponent[i].display = true;
-          flag = true
-        }else{
-            i++
+          flag = true;
+        } else {
+          i++;
         }
       }
     },
-    isComponentToggle:function(cName){
-        console.log("cName : " + cName)
-        for (var i = 0; i < this.tabComponent.length; i++) {
-            console.log("composant : " + this.tabComponent[i].name)
-            if(this.tabComponent[i].name == cName && this.tabComponent[i].display == true){
-                console.log("composant oui : " + this.tabComponent[i].name)
-                return true
-            }
+    isComponentToggle: function(cName) {
+      console.log("cName : " + cName);
+      for (var i = 0; i < this.tabComponent.length; i++) {
+        console.log("composant : " + this.tabComponent[i].name);
+        if (
+          this.tabComponent[i].name == cName &&
+          this.tabComponent[i].display == true
+        ) {
+          console.log("composant oui : " + this.tabComponent[i].name);
+          return true;
         }
-        return false
+      }
+      return false;
     },
-    searchUsers:function(){
-      this.usersSelected = []
+    searchUsers: function() {
+      this.usersSelected = [];
       for (var user of this.users) {
-        if (user.name.includes(this.searchInput) || user.firstname.includes(this.searchInput) || user.mail.includes(this.searchInput) || user.status.includes(this.searchInput)) {
-          this.usersSelected.push(user)          
+        if (
+          user.name.includes(this.searchInput) ||
+          user.firstname.includes(this.searchInput) ||
+          user.mail.includes(this.searchInput) ||
+          user.status.includes(this.searchInput)
+        ) {
+          this.usersSelected.push(user);
         }
       }
     },
-    calculTeamNotInUser:function(){
-      this.teamsNotInUser = []
-      this.teamsFromUser = []
-      var found = false
-        for (let k = 0; k < this.teams.length; k++) {
-          found = false
-          for (let l = 0; l < this.teams[k].members.length; l++) {
-            if(this.teams[k].members[l].id == this.userId){
-              found = true
-              this.teamsFromUser.push(this.teams[k])
-            }            
-          }
-          if (!found) {
-            this.teamsNotInUser.push(this.teams[k])
+    calculTeamNotInUser: function() {
+      this.teamsNotInUser = [];
+      this.teamsFromUser = [];
+      var found = false;
+      for (let k = 0; k < this.teams.length; k++) {
+        found = false;
+        for (let l = 0; l < this.teams[k].members.length; l++) {
+          if (this.teams[k].members[l].id == this.userId) {
+            found = true;
+            this.teamsFromUser.push(this.teams[k]);
           }
         }
+        if (!found) {
+          this.teamsNotInUser.push(this.teams[k]);
+        }
+      }
     },
-    renderUser:function(userId){
-      this.displayUser = true
-      this.userId = userId
-      this.calculTeamNotInUser()
+    renderUser: function(userId) {
+      this.displayUser = true;
+      this.userId = userId;
+      this.calculTeamNotInUser();
       this.$forceUpdate();
     },
-    removeTeam:function(teamId){
-      var userId = this.userId
+    removeTeam: function(teamId) {
+      var userId = this.userId;
       for (let i = 0; i < this.teams.length; i++) {
         if (this.teams[i].id == teamId) {
-              this.teams[i].members = this.teams[i].members.filter(function (member) {
-                return member.id != userId;
-              })           
-          }        
-      }
-      if (localStorage.getItem('teams')) {
-        try {
-          const parsed = JSON.stringify(this.teams);
-          localStorage.setItem('teams', parsed);
-        } catch(e) {
-          localStorage.removeItem('teams');
+          this.teams[i].members = this.teams[i].members.filter(function(
+            member
+          ) {
+            return member.id != userId;
+          });
         }
       }
-      this.calculTeamNotInUser()
+      if (localStorage.getItem("teams")) {
+        try {
+          const parsed = JSON.stringify(this.teams);
+          localStorage.setItem("teams", parsed);
+        } catch (e) {
+          localStorage.removeItem("teams");
+        }
+      }
+      this.calculTeamNotInUser();
     },
-    addTeamToUser:function(teamId){
-      if(teamId != ""){
-        var userToAdd = {}
-        
+    addTeamToUser: function(teamId) {
+      if (teamId != "") {
+        var userToAdd = {};
+
         for (let j = 0; j < this.users.length; j++) {
-          console.log(this.users[j].id + " | " + this.userId)
+          console.log(this.users[j].id + " | " + this.userId);
           if (this.users[j].id == this.userId) {
-            console.log("found")
-            userToAdd = this.users[j]
+            console.log("found");
+            userToAdd = this.users[j];
           }
-          
         }
         for (let i = 0; i < this.teams.length; i++) {
-          if(this.teams[i].id == teamId){
-            this.teams[i].members.push(userToAdd)
-          }        
-        }
-
-        if (localStorage.getItem('teams')) {
-          try {
-            const parsed = JSON.stringify(this.teams);
-            localStorage.setItem('teams', parsed);
-          } catch(e) {
-            localStorage.removeItem('teams');
+          if (this.teams[i].id == teamId) {
+            this.teams[i].members.push(userToAdd);
           }
         }
-        this.calculTeamNotInUser()
-      }
-      
-    },
-    deleteUser:function(teamId){
-      this.teams = this.teams.filter(function (team) {
-        return team.id != teamId
-      })
 
-      if (localStorage.getItem('teams')) {
+        if (localStorage.getItem("teams")) {
+          try {
+            const parsed = JSON.stringify(this.teams);
+            localStorage.setItem("teams", parsed);
+          } catch (e) {
+            localStorage.removeItem("teams");
+          }
+        }
+        this.calculTeamNotInUser();
+      }
+    },
+    deleteUser: function(teamId) {
+      this.teams = this.teams.filter(function(team) {
+        return team.id != teamId;
+      });
+
+      if (localStorage.getItem("teams")) {
         try {
           const parsed = JSON.stringify(this.teams);
-          localStorage.setItem('teams', parsed);
-        } catch(e) {
-          localStorage.removeItem('teams');
+          localStorage.setItem("teams", parsed);
+        } catch (e) {
+          localStorage.removeItem("teams");
         }
       }
     },
-    createUser:function(teamName){
-      if(teamName != ""){
+    createUser: function(teamName) {
+      if (teamName != "") {
         var teamCreated = {
           id: 1,
           name: teamName,
-          members:[
-          ]
-        }
-        teamCreated.id = ((this.teams[this.teams.length - 1].id) + 1)
-        teamCreated.members.push(this.$session.get('user'))
+          members: []
+        };
+        teamCreated.id = this.teams[this.teams.length - 1].id + 1;
+        teamCreated.members.push(this.$session.get("user"));
 
-        this.teams.push(teamCreated)
+        this.teams.push(teamCreated);
 
-        if (localStorage.getItem('teams')) {
+        if (localStorage.getItem("teams")) {
           try {
             const parsed = JSON.stringify(this.teams);
-            localStorage.setItem('teams', parsed);
-          } catch(e) {
-            localStorage.removeItem('teams');
+            localStorage.setItem("teams", parsed);
+          } catch (e) {
+            localStorage.removeItem("teams");
           }
         }
-
       }
-
     },
-        searchTeams:function(){
-      this.teamDisplayed = {}
-      this.displayTeam = false
-      this.teamsSelected = []
+    searchTeams: function() {
+      this.teamDisplayed = {};
+      this.displayTeam = false;
+      this.teamsSelected = [];
       for (var team of this.teams) {
         if (team.name.includes(this.searchInputTeam)) {
-          this.teamsSelected.push(team)          
+          this.teamsSelected.push(team);
         }
       }
     },
-    calculUserNotInProject:function(){
-      this.usersNotInTeam = []
-      var myTeam = []
-      var found = false
-        this.teams.forEach(team => {
-          if(team.id == this.teamId){
-            myTeam = team.members
-          }
-        });
+    calculUserNotInProject: function() {
+      this.usersNotInTeam = [];
+      var myTeam = [];
+      var found = false;
+      this.teams.forEach(team => {
+        if (team.id == this.teamId) {
+          myTeam = team.members;
+        }
+      });
 
-        for (let j = 0; j < this.users.length; j++) {
-          found = false
-          for (let i = 0; i < myTeam.length; i++) {
-            if(this.users[j].id == myTeam[i].id){
-              found = true
-            }            
-          }
-          if (!found) {            
-            this.usersNotInTeam.push(this.users[j])
+      for (let j = 0; j < this.users.length; j++) {
+        found = false;
+        for (let i = 0; i < myTeam.length; i++) {
+          if (this.users[j].id == myTeam[i].id) {
+            found = true;
           }
         }
+        if (!found) {
+          this.usersNotInTeam.push(this.users[j]);
+        }
+      }
     },
-    renderTeam:function(teamId){
-      this.displayTeam = true
-      this.teamId = teamId
-      this.calculUserNotInProject()
+    renderTeam: function(teamId) {
+      this.displayTeam = true;
+      this.teamId = teamId;
+      this.calculUserNotInProject();
       this.$forceUpdate();
     },
-    removeUser:function(userId){
+    removeUser: function(userId) {
       for (let i = 0; i < this.teams.length; i++) {
         if (this.teams[i].id == this.teamId) {
-              this.teams[i].members = this.teams[i].members.filter(function (member) {
-                return member.id != userId;
-              })           
-          }        
-      }
-      if (localStorage.getItem('teams')) {
-        try {
-          const parsed = JSON.stringify(this.teams);
-          localStorage.setItem('teams', parsed);
-        } catch(e) {
-          localStorage.removeItem('teams');
+          this.teams[i].members = this.teams[i].members.filter(function(
+            member
+          ) {
+            return member.id != userId;
+          });
         }
       }
-      this.calculUserNotInProject()
+      if (localStorage.getItem("teams")) {
+        try {
+          const parsed = JSON.stringify(this.teams);
+          localStorage.setItem("teams", parsed);
+        } catch (e) {
+          localStorage.removeItem("teams");
+        }
+      }
+      this.calculUserNotInProject();
     },
-    addUserToTeam:function(userId){
-      if(userId != ""){
-        var userToAdd = {}
+    addUserToTeam: function(userId) {
+      if (userId != "") {
+        var userToAdd = {};
         for (let j = 0; j < this.usersNotInTeam.length; j++) {
           if (this.usersNotInTeam[j].id == userId) {
-            userToAdd = this.usersNotInTeam[j]
+            userToAdd = this.usersNotInTeam[j];
           }
-          
         }
         for (let i = 0; i < this.teams.length; i++) {
-          if(this.teams[i].id == this.teamId){
-            this.teams[i].members.push(userToAdd)
-          }        
-        }
-
-        if (localStorage.getItem('teams')) {
-          try {
-            const parsed = JSON.stringify(this.teams);
-            localStorage.setItem('teams', parsed);
-          } catch(e) {
-            localStorage.removeItem('teams');
+          if (this.teams[i].id == this.teamId) {
+            this.teams[i].members.push(userToAdd);
           }
         }
-        this.calculUserNotInProject()
-      }
-      
-    },
-    deleteTeam:function(teamId){
-      this.teams = this.teams.filter(function (team) {
-        return team.id != teamId
-      })
 
-      if (localStorage.getItem('teams')) {
+        if (localStorage.getItem("teams")) {
+          try {
+            const parsed = JSON.stringify(this.teams);
+            localStorage.setItem("teams", parsed);
+          } catch (e) {
+            localStorage.removeItem("teams");
+          }
+        }
+        this.calculUserNotInProject();
+      }
+    },
+    deleteTeam: function(teamId) {
+      this.teams = this.teams.filter(function(team) {
+        return team.id != teamId;
+      });
+
+      if (localStorage.getItem("teams")) {
         try {
           const parsed = JSON.stringify(this.teams);
-          localStorage.setItem('teams', parsed);
-        } catch(e) {
-          localStorage.removeItem('teams');
+          localStorage.setItem("teams", parsed);
+        } catch (e) {
+          localStorage.removeItem("teams");
         }
       }
     },
-    createTeam:function(teamName){
-      if(teamName != ""){
+    createTeam: function(teamName) {
+      if (teamName != "") {
         var teamCreated = {
           id: 1,
           name: teamName,
-          members:[
-          ]
-        }
-        teamCreated.id = ((this.teams[this.teams.length - 1].id) + 1)
-        teamCreated.members.push(this.$session.get('user'))
+          members: []
+        };
+        teamCreated.id = this.teams[this.teams.length - 1].id + 1;
+        teamCreated.members.push(this.$session.get("user"));
 
-        this.teams.push(teamCreated)
+        this.teams.push(teamCreated);
 
-        if (localStorage.getItem('teams')) {
+        if (localStorage.getItem("teams")) {
           try {
             const parsed = JSON.stringify(this.teams);
-            localStorage.setItem('teams', parsed);
-          } catch(e) {
-            localStorage.removeItem('teams');
+            localStorage.setItem("teams", parsed);
+          } catch (e) {
+            localStorage.removeItem("teams");
           }
         }
-
       }
+    },
+    createMotif:function(motif){
+      this.events.push(motif)
+       if (localStorage.getItem("events")) {
+          try {
+            const parsed = JSON.stringify(this.events);
+            localStorage.setItem("events", parsed);
+          } catch (e) {
+            localStorage.removeItem("events");
+          }
+        }
+        this.createInputMotif = ""
+    },
+    deleteMotif:function(motif){
+        var temp = []
+        for (var i = 0; i < this.events.length; i++) {
+          if (this.events[i] != motif) {
+            temp.push(this.events[i])
+          }
+          
+        }
+        this.events = temp
 
+        if (localStorage.getItem("events")) {
+          try {
+            const parsed = JSON.stringify(this.events);
+            localStorage.setItem("events", parsed);
+          } catch (e) {
+            localStorage.removeItem("events");
+          }
+        }
     }
   }
 };
 </script>
 
 <style>
-
-@media only screen and (max-width: 576px) { 
-  td.hide { 
-    display: none; 
-  } 
+@media only screen and (max-width: 576px) {
+  td.hide {
+    display: none;
+  }
 }
-
 
 @media screen and (max-width: 768px) {
+  .tab-responsive table thead {
+    display: none;
+  }
 
-    .tab-responsive table thead {
-        display: none;
-    }
+  .tab-responsive table tr {
+    display: block;
+    border-top: 2px solid lightgray;
+    margin-top: 20px;
+  }
 
-    .tab-responsive table tr {
-        display: block;
-        border-top: 2px solid lightgray;
-        margin-top: 20px;
-    }
+  .tab-responsive table td {
+    display: block;
+    text-align: right;
+  }
 
-    .tab-responsive table td {
-        display: block;
-        text-align: right
-    }
-
-    .tab-responsive table td:before {
-        content: attr(data-label);
-        float: left;
-        font-weight: 700;
-    }
+  .tab-responsive table td:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 700;
+  }
 }
 
-.content{
+.content {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 12px;
 }
 
-.sidebar{
+.sidebar {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 12px;
-  
 }
-
 </style>

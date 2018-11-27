@@ -149,7 +149,8 @@
     <div class="list-event mt-3">
       <div  :key="event.id" class="row border-bottom border-dark ml-3 mr-3 mb-3 pb-1" v-for="event in this.eventsList">
         <div class="box d-table">
-          <div :class="['col-xs-2', , 'mr-2', 'pr-2', 'border-right']"><b>{{$moment(event.dateEventBegin).format('HH:mm') }}</b><br>{{$moment(event.dateEventEnd).format('HH:mm') }} </div>
+          <div class="d-table-cell align-middle pl-2 pr-2 mr-4 border-right"><i @click="deleteEvent(event.id, event.events)" class="fas fa-minus-circle"></i></div>
+          <div :class="['col-xs-2','ml-2' , 'mr-2', 'pr-2', 'border-right']"><b>{{$moment(event.dateEventBegin).format('HH:mm') }}</b><br>{{$moment(event.dateEventEnd).format('HH:mm') }} </div>
           <div class="d-table-cell align-middle col-xs-2 mr-2 pr-2 border-right"><b>{{event.type}}</b></div>
           <div class="d-table-cell align-middle pl-2">{{event.name}}</div>
         </div>                
@@ -179,7 +180,8 @@ export default {
       endOfMonth :"",
       startBuffer: 0,
       endBuffer: 0,
-      eventsList : []
+      eventsList : [],
+      log: []
     };
   },
   created() {
@@ -220,6 +222,13 @@ export default {
         localStorage.removeItem('users');
       }
     }
+        if(localStorage.getItem('log')) {
+      try {
+        this.log = JSON.parse(localStorage.getItem('log'));
+      } catch(e) {
+        localStorage.removeItem('log');
+      }
+    }
     
 
   },
@@ -238,6 +247,13 @@ export default {
         localStorage.removeItem('users');
       }
     }
+        if(localStorage.getItem('log')) {
+      try {
+        this.log = JSON.parse(localStorage.getItem('log'));
+      } catch(e) {
+        localStorage.removeItem('log');
+      }
+    }
   },
   methods:{
     renderPlanning:function(){
@@ -254,8 +270,25 @@ export default {
       this.planning.forEach(event => {
         if(event.userId == this.selectedUserId){
           if(this.$moment(event.dateEventBegin).format('YYYY-MM') == this.$moment(this.beginOfMonth).format('YYYY-MM')){
-            this.planningSorted[this.getDayOfMonth(event.dateEventBegin) - 1 + this.startBuffer].nbEvents ++ 
-            this.planningSorted[this.getDayOfMonth(event.dateEventBegin) - 1 + this.startBuffer].events.push(event) 
+            var numeroJourDebut = this.$moment(event.dateEventBegin).dayOfYear()
+            var numeroJourMois =  this.$moment(this.beginOfMonth).dayOfYear()
+            var vari = numeroJourDebut - numeroJourMois
+            var nbJours = this.$moment(event.dateEventEnd).dayOfYear() - this.$moment(event.dateEventBegin).dayOfYear()
+            if (nbJours >=1) {
+              for (var k = vari; k < (vari + nbJours + 2); k++) {
+                console.log("k=" + k)
+                var value =  k + this.startBuffer
+                console.log("value=" + value)
+                this.planningSorted[value].nbEvents ++ 
+                this.planningSorted[value].events.push(event) 
+                
+              }
+
+            } else {
+              this.planningSorted[this.getDayOfMonth(event.dateEventBegin) - 1 + this.startBuffer].nbEvents ++ 
+              this.planningSorted[this.getDayOfMonth(event.dateEventBegin) - 1 + this.startBuffer].events.push(event) 
+            }
+            
             //console.log("render " +event.dateEventBegin + " - " + this.planningSorted[this.getDayOfMonth(event.dateEventBegin)])
           }else{            
             //console.log("event name : " + event.name + " | debut event " + this.$moment(event.dateEventBegin).format('YYYY-MM') + " | debut mois " + this.$moment(this.beginOfMonth).format('YYYY-MM'))
@@ -299,6 +332,40 @@ export default {
     getDetailsOfDay:function(events){
       this.eventsList = []
       this.eventsList = events      
+    },
+    deleteEvent:function(eventId, eventList){
+      this.planning = this.planning.filter(function(event) {
+        return event.id != eventId;
+      });
+
+        if (localStorage.getItem('planning')) {
+          try {
+            const parsed = JSON.stringify(this.planning);
+            localStorage.setItem('planning', parsed);
+          } catch(e) {
+            localStorage.removeItem('planning');
+          }
+        }
+
+          var logData = {
+            user: this.$session.get('user').mail,
+            date: this.$moment(),
+            status:"DELETE",
+            content:eventId
+          }
+          this.log.push(logData)
+          if (localStorage.getItem('log')) {
+          try {
+            const parsed = JSON.stringify(this.log);
+            localStorage.setItem('log', parsed);
+          } catch(e) {
+            localStorage.removeItem('log');
+          }
+        }
+      this.renderPlanning()
+      this.getDetailsOfDay(eventList)
+
+
     }
   },  
   props: {

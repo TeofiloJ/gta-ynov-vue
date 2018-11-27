@@ -6,6 +6,17 @@
                 <b-card no-body>
                     <b-tabs card>
                         <b-tab title="Tickets">
+                          <b-row>
+                            <b-col>
+
+                            </b-col>
+                            <b-col>
+
+                            </b-col>
+                            <b-col>
+                              
+                            </b-col>
+                          </b-row>
 
                         </b-tab>
                         <b-tab title="Bilan" >
