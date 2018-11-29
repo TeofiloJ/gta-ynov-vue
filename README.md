@@ -4,6 +4,11 @@
 
 ---
 
+Admin (drh) : teofilo.jeandot@ynov.com / bloup
+Resposable : foo.bar@ynov.com / bloup
+Collaborateur (salarié) : jack.michalon@ynov.com / bloup
+
+
 - **URL de déploiement** : https://teofiloj.github.io/
 
 ### Séances du 22-23/11/18
