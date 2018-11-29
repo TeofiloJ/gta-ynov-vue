@@ -6,16 +6,16 @@
                 <span>{{data.jour}}</span>                  
                 <div :key="event.id" v-for="event in data.events">
                     <div v-if="event.dateEventBegin < calculatedDateEnd">
-                          <pre v-b-modal.modal-center="'myModal' + event.id" class="border mb-2 mt-2" style="background-color:white; height:20%">{{event.name}}</pre>
-                            <b-modal v-bind:title="event.name" v-bind:id="'myModal' + event.id">
-                              <div>
-                                <p>Date début : {{event.dateEventBegin}}</p>                                
-                              </div>
-                              <div>
-                                <p>Date fin : {{event.dateEventEnd}}</p>
-                              </div>
-                              <b-btn on:click="PlanningServices.updateEvent(event)">boutton</b-btn>
-                            </b-modal>                          
+                          <div class="list-event mt-3">
+                            <div class="row border-bottom border-dark ml-3 mr-3 mb-3 pb-1">
+                              <div class="box d-table">
+                                <div class="d-table-cell align-middle pl-2 pr-2 mr-4 border-right"><i @click="deleteEvent(event.id, event.events)" class="fas fa-minus-circle"></i></div>
+                                <div :class="['col-xs-2','ml-2' , 'mr-2', 'pr-2', 'border-right']"><b>{{$moment(event.dateEventBegin).format('HH:mm') }}</b><br>{{$moment(event.dateEventEnd).format('HH:mm') }} </div>
+                                <div class="d-table-cell align-middle col-xs-2 mr-2 pr-2 border-right"><b>{{event.type}}</b></div>
+                                <div class="d-table-cell align-middle pl-2">{{event.name}}</div>
+                              </div>                
+                            </div>
+                          </div>                        
                     </div>
                 </div> 
             </div>

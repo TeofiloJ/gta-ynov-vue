@@ -5,6 +5,72 @@
             <b-col>
                 <b-card no-body>
                     <b-tabs card>
+                        <b-tab title="Tickets">
+                          
+                          <b-row>
+                            <b-col md="3">
+                              <b-list-group class="mt-2 mb-2">
+                              <b-list-group-item v-on:click="allTickets"><i class="far fa-list-alt"></i> Tous les tickets</b-list-group-item>
+                            </b-list-group>
+                          <div class="mb-2" v-if="this.$session.get('user').status == 'administrateur'">
+
+                            <label for="userlabel">Utilisateur :</label>
+                            <b-select class="mb-2" v-model="selectedUser" name="userlabel" >
+                                <option :key="user.id" :value="user.id" v-for="user in users">{{user.firstname}} {{user.name}}</option>
+                            </b-select>
+                          <b-btn v-if="selectedUser == ''" size="sm" disabled >Afficher</b-btn>
+                          <b-btn v-else size="sm"  @click="filterTickets" >Afficher</b-btn>
+                      </div>
+                      <div class="mb-2" v-else-if="this.$session.get('user').status == 'responsable' ">
+
+                            <label for="equipelabel">Equipe :</label>
+                            <b-form-select class="mb-2" v-model="selectedTeam" name="equipelabel" >
+                                <option  @click="emptyUser" v-if="team.members[0].id == $session.get('user').id" :key="team.id" :value="team.id" v-for="team in teams">{{team.name}}</option>
+                            </b-form-select>
+
+                            <label for="userlabel">Utilisateur :</label>
+                            <b-select v-for="team in teams" v-if="team.id == selectedTeam" class="mb-2" v-model="selectedUser" name="userlabel" >
+                                <option :key="user.id" :value="user.id" v-for="user in team.members">{{user.firstname}} {{user.name}}</option>
+                            </b-select>
+                          <b-btn v-if="selectedUser == ''" size="sm" disabled >Afficher</b-btn>
+                          <b-btn v-else size="sm"  @click="filterTickets" >Afficher</b-btn>
+                      </div>
+                            </b-col>
+                            <b-col>
+                              <p style="font-size:25px">Tickets en attente :</p>
+                               <div class="list-event mt-3">
+                                 
+                            <div v-for="ticket in ticketsSelected" class="row border-bottom border-dark ml-3 mr-3 mb-3 pb-1">
+                              <div class="box d-table">
+                                <div class="d-table-cell align-middle pl-2 pr-1 mr-1  "><i @click="deleteTicket(ticket.id)" class="fas fa-minus-circle"></i></div>
+                                <div class="d-table-cell align-middle pl-2 pr-2 mr-4 border-right"><i @click="validateTicket(ticket.id)" class="fas fa-check-circle"></i></div>
+                                <div :class="['col-xs-2','ml-2' , 'mr-2', 'pr-2', 'border-right']"><b>{{$moment(ticket.dateEventBegin).format('HH:mm') }}</b><br>{{$moment(ticket.dateEventEnd).format('HH:mm') }} </div>
+                                <div class="d-table-cell align-middle col-xs-2 mr-2 pr-2 border-right"><b>{{ticket.type}}</b></div>
+                                <div class="d-table-cell align-middle pl-2">{{ticket.name}}</div>
+                              </div>                
+                            </div>
+                          </div>   
+
+
+                            </b-col>
+                            <b-col>
+                                                            <p style="font-size:25px">Tickets Validés :</p>
+                            <div class="list-event mt-3">
+                            <div v-for="event in planningSelected" class="row border-bottom border-dark ml-3 mr-3 mb-3 pb-1">
+                              <div class="box d-table">
+                                
+                                <div class="d-table-cell align-middle pl-2 pr-2 mr-4 border-right"><i @click="deleteEvent(event.id)" class="fas fa-minus-square"></i></div>
+                                <div :class="['col-xs-2','ml-2' , 'mr-2', 'pr-2', 'border-right']"><b>{{$moment(event.dateEventBegin).format('HH:mm') }}</b><br>{{$moment(event.dateEventEnd).format('HH:mm') }} </div>
+                                <div class="d-table-cell align-middle col-xs-2 mr-2 pr-2 border-right"><b>{{event.type}}</b></div>
+                                <div class="d-table-cell align-middle pl-2">{{event.name}}</div>
+                              </div>                
+                            </div>
+                            </div>
+
+                            </b-col>
+                          </b-row>
+
+                        </b-tab>
                         <b-tab title="Utilisateurs">
                             <b-row>
                               <b-col md="3">
@@ -269,7 +335,14 @@ export default {
       teamsSelected: [],
       searchInputTeam: "",
       log: [],
-      events: []
+      events: [],
+      selectedUser:"",
+      tickets : [],
+      ticketsSelected : [],
+      planning : [],
+      planningSelected: [],
+      lastChoice: "",
+      selectedTeam:"",
     };
   },
   created() {
@@ -301,8 +374,29 @@ export default {
         localStorage.removeItem("log");
       }
     }
+        if (localStorage.getItem("tickets")) {
+      try {
+        this.tickets = JSON.parse(localStorage.getItem("tickets"));
+      } catch (e) {
+        localStorage.removeItem("tickets");
+      }
+    }
+        if (localStorage.getItem('planning')) {
+      try {
+        this.planning = JSON.parse(localStorage.getItem('planning'));
+      } catch(e) {
+        localStorage.removeItem('planning');
+      }
+    }
   },
   mounted() {
+            if (localStorage.getItem("tickets")) {
+      try {
+        this.tickets = JSON.parse(localStorage.getItem("tickets"));
+      } catch (e) {
+        localStorage.removeItem("tickets");
+      }
+    }
     if (localStorage.getItem("events")) {
       try {
         this.events = JSON.parse(localStorage.getItem("events"));
@@ -331,6 +425,13 @@ export default {
         localStorage.removeItem("log");
       }
     }
+        if (localStorage.getItem('planning')) {
+      try {
+        this.planning = JSON.parse(localStorage.getItem('planning'));
+      } catch(e) {
+        localStorage.removeItem('planning');
+      }
+    }
   },
   methods: {
     initTabComponent: function() {
@@ -352,14 +453,11 @@ export default {
       }
     },
     isComponentToggle: function(cName) {
-      console.log("cName : " + cName);
       for (var i = 0; i < this.tabComponent.length; i++) {
-        console.log("composant : " + this.tabComponent[i].name);
         if (
           this.tabComponent[i].name == cName &&
           this.tabComponent[i].display == true
         ) {
-          console.log("composant oui : " + this.tabComponent[i].name);
           return true;
         }
       }
@@ -369,10 +467,10 @@ export default {
       this.usersSelected = [];
       for (var user of this.users) {
         if (
-          user.name.includes(this.searchInput) ||
-          user.firstname.includes(this.searchInput) ||
-          user.mail.includes(this.searchInput) ||
-          user.status.includes(this.searchInput)
+          user.name.includes(this.searchInputUser) ||
+          user.firstname.includes(this.searchInputUser) ||
+          user.mail.includes(this.searchInputUser) ||
+          user.status.includes(this.searchInputUser)
         ) {
           this.usersSelected.push(user);
         }
@@ -427,9 +525,7 @@ export default {
         var userToAdd = {};
 
         for (let j = 0; j < this.users.length; j++) {
-          console.log(this.users[j].id + " | " + this.userId);
           if (this.users[j].id == this.userId) {
-            console.log("found");
             userToAdd = this.users[j];
           }
         }
@@ -635,7 +731,175 @@ export default {
             localStorage.removeItem("events");
           }
         }
-    }
+    },
+    allTickets:function(){
+      this.lastChoice = "all"
+      this.selectedUser =""
+      this.ticketsSelected = []
+      this.planningSelected = []
+      if (this.$session.get('user').status == 'administrateur') {
+        this.ticketsSelected = this.tickets
+        this.planningSelected = this.planning
+      } else { //responsable
+        var found = false
+        for (var i = 0; i < this.tickets.length; i++) {
+          found = false
+
+          var j = 0
+          while (j < this.teams.length && !found) {
+
+            if (this.$session.get('user').id == this.selectedUser) {
+              var k = 0
+            } else {
+              var k = 1
+            }
+            while (k < this.teams[j].members.length && !found) {
+              if (this.teams[j].members[k].id == this.tickets[i].userId) {
+                this.ticketsSelected.push(this.tickets[i])
+                found = true
+              }
+              k++
+            }
+            j++
+          }         
+        }
+
+        for (var i = 0; i < this.planning.length; i++) {
+          found = false
+          var j = 0
+          while (j < this.teams.length && !found) {
+            if (this.$session.get('user').id == this.selectedUser) {
+              var k = 0
+            } else {
+              var k = 1
+            }
+            while (k < this.teams[j].members.length && !found) {
+              if (this.teams[j].members[k].id == this.planning[i].userId) {
+                this.planningSelected.push(this.planning[i])
+                found = true
+              }
+              k++
+            }
+            j++
+          }         
+        }
+      }
+
+    },
+    filterTickets:function(){
+      this.lastChoice = "filter"
+      this.ticketsSelected = []
+      this.planningSelected = []
+        var found = false
+        for (var i = 0; i < this.tickets.length; i++) {
+          if (this.tickets[i].userId == this.selectedUser) {
+            this.ticketsSelected.push(this.tickets[i])
+          }         
+        }
+
+        for (var i = 0; i < this.planning.length; i++) {
+          if (this.planning[i].userId == this.selectedUser) {
+            this.planningSelected.push(this.planning[i])
+          }  
+        }
+    },
+        deleteTicket:function(ticketId){
+      this.tickets = this.tickets.filter(function(ticket) {
+        return ticket.id != ticketId;
+      });
+
+        if (localStorage.getItem('tickets')) {
+          try {
+            const parsed = JSON.stringify(this.tickets);
+            localStorage.setItem('tickets', parsed);
+          } catch(e) {
+            localStorage.removeItem('tickets');
+          }
+        }
+        if (this.lastChoice == "all") {
+          this.allTickets()
+        } else {
+          this.filterTickets()
+        }
+
+    },
+     deleteEvent:function(eventId){
+      this.planning = this.planning.filter(function(event) {
+        return event.id != eventId;
+      });
+
+        if (localStorage.getItem('planning')) {
+          try {
+            const parsed = JSON.stringify(this.planning);
+            localStorage.setItem('planning', parsed);
+          } catch(e) {
+            localStorage.removeItem('planning');
+          }
+        }
+
+                if (this.lastChoice == "all") {
+          this.allTickets()
+        } else {
+          this.filterTickets()
+        }
+
+    },
+    emptyUser:function(){
+      this.selectedUser = ""
+    },
+    validateTicket:function(ticketId){
+      console.log("on cherche" + ticketId)
+      var found = false
+      var i = 0
+      var j = 0
+      while(i < this.tickets.length && !found){
+        console.log("avant " + this.tickets[i].id)
+        if (this.tickets[i].id == ticketId) {
+          found = true
+          j = i
+        }else{
+          i++
+        }
+      }
+      var temp = Object.assign({},this.tickets[i])
+      temp.id = this.planning[this.planning.length -1].id + 1
+      this.planning.push(temp)
+
+      temp = []
+      for (var i = 0; i < this.tickets.length; i++) {
+         if (this.tickets[i].id != ticketId) {
+          temp.push(this.tickets[i])
+        }
+        
+      }
+      this.tickets = temp
+
+        if (localStorage.getItem('tickets')) {
+          try {
+            const parsed = JSON.stringify(this.tickets);
+            localStorage.setItem('tickets', parsed);
+          } catch(e) {
+            localStorage.removeItem('tickets');
+          }
+        }
+
+        if (localStorage.getItem('planning')) {
+          try {
+            const parsed = JSON.stringify(this.planning);
+            localStorage.setItem('planning', parsed);
+          } catch(e) {
+            localStorage.removeItem('planning');
+          }
+        }
+
+        if (this.lastChoice == "all") {
+          console.log("ui")
+          this.allTickets()
+        } else {
+          this.filterTickets()
+        }
+
+    },
   }
 };
 </script>

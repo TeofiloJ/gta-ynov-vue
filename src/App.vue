@@ -273,7 +273,11 @@ const users = [
   }        
 ]
 
-const events = ["congés","Absence","RTT","Repos","Jour férié"]
+const tickets = [
+
+]
+
+const events = ["congés","Absence","RTT","Repos"]
 
 export default {
   components: {
@@ -286,6 +290,14 @@ export default {
     }
   },
   created(){
+        if (!localStorage.getItem('tickets')) {
+      try {
+        const parsed = JSON.stringify(tickets);
+        localStorage.setItem('tickets', parsed);
+      } catch(e) {
+        localStorage.removeItem('tickets');
+      }
+    }
     if (!localStorage.getItem('users')) {
       try {
         const parsed = JSON.stringify(users);
@@ -324,6 +336,14 @@ export default {
         localStorage.setItem('log', parsed);
       } catch(e) {
         localStorage.removeItem('log');
+      }
+    }
+            if (!localStorage.getItem('tickets')) {
+      try {
+        const parsed = JSON.stringify(tickets);
+        localStorage.setItem('tickets', parsed);
+      } catch(e) {
+        localStorage.removeItem('tickets');
       }
     }
     

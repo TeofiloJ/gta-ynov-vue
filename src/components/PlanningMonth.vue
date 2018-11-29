@@ -181,7 +181,7 @@ export default {
       startBuffer: 0,
       endBuffer: 0,
       eventsList : [],
-      log: []
+      log: [],
     };
   },
   created() {
@@ -351,7 +351,9 @@ export default {
             user: this.$session.get('user').mail,
             date: this.$moment(),
             status:"DELETE",
-            content:eventId
+            content: this.eventsList.filter(function(event) {
+            return event.id == eventId;
+            })
           }
           this.log.push(logData)
           if (localStorage.getItem('log')) {
@@ -363,7 +365,9 @@ export default {
           }
         }
       this.renderPlanning()
-      this.getDetailsOfDay(eventList)
+      this.eventsList = this.eventsList.filter(function(event) {
+            return event.id != eventId;
+          });
 
 
     }

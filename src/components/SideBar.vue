@@ -369,7 +369,7 @@ export default {
             status:"ADD",
             content:eventToAdd
           }
-          this.log.push(logData)
+          this.log.unshift(logData)
           if (localStorage.getItem('log')) {
           try {
             const parsed = JSON.stringify(this.log);
@@ -457,7 +457,7 @@ export default {
             status:"ADD",
             content:eventToAdd
           }
-          this.log.push(logData)
+          this.log.unshift(logData)
           if (localStorage.getItem('log')) {
           try {
             const parsed = JSON.stringify(this.log);

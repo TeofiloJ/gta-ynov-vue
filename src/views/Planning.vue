@@ -7,12 +7,12 @@
     <div class="row" >
        
         <!-- Left Sidebar -->
-        <div class="col-lg-2 mt-2">
+        <div class="col-lg-3 mt-2">
            <SideBar  :toggleMonthView="toggleMonthView" v-on:togglePlanningView="togglePlanningView"></SideBar>
         </div>
 
         <!-- Center -->
-        <div class="col-lg-10 mt-2">
+        <div class="col-lg-9 mt-2">
             <div v-if="!isPlanningViewMonth()">
                 <PlanningWeek class="planning" :planning='planning'  />
             </div>
@@ -44,7 +44,7 @@ export default {
       selectedDateBegin: "20",
       selectedDateEnd: "",
       selectedMonth: "",
-      toggleMonthView : false,
+      toggleMonthView : true,
       users: []
     }
   },

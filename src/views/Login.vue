@@ -65,7 +65,7 @@ export default {
       if (found){
         this.$session.start()
         this.$session.set('user',this.users[i])
-        this.$router.push('/account')      
+        this.$router.push('/planning')      
       }else{
           this.errorMessage = "False email or password"
       }
